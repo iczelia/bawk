@@ -1,0 +1,6 @@
+- auto-vectorise on array types
+- generics
+- infer purity
+- circular type inference
+- modularise the code generator
+- optimisations
