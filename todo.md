@@ -2,5 +2,5 @@
 - generics
 - infer purity
 - circular type inference
-- modularise the code generator
 - optimisations
+- native code generator backend.

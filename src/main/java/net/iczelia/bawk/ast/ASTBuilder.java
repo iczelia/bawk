@@ -62,6 +62,7 @@ public class ASTBuilder extends GrammarBaseVisitor<ParseResult> {
         String typeName = ctx.getText();
         return switch (typeName) {
             case "i32" -> PrimitiveType.I32;
+            case "f32" -> PrimitiveType.F32;
             case "str" -> PrimitiveType.STR;
             default -> throw new RuntimeException("Unknown type: " + typeName);
         };
@@ -212,6 +213,26 @@ public class ASTBuilder extends GrammarBaseVisitor<ParseResult> {
     @Override
     public ParseResult visitConstInt(GrammarParser.ConstIntContext ctx) {
         return new I32Lit(Integer.parseInt(ctx.INT().getText()));
+    }
+
+    @Override
+    public ParseResult visitConstHex(GrammarParser.ConstHexContext ctx) {
+        return new I32Lit(Integer.parseInt(ctx.HEX().getText().substring(2), 16));
+    }
+
+    @Override
+    public ParseResult visitConstOct(GrammarParser.ConstOctContext ctx) {
+        return new I32Lit(Integer.parseInt(ctx.OCT().getText().substring(2), 8));
+    }
+
+    @Override
+    public ParseResult visitConstBin(GrammarParser.ConstBinContext ctx) {
+        return new I32Lit(Integer.parseInt(ctx.BIN().getText().substring(2), 2));
+    }
+
+    @Override
+    public ParseResult visitConstFloat(GrammarParser.ConstFloatContext ctx) {
+        return new F32Lit(Float.parseFloat(ctx.FLOAT().getText()));
     }
 
     @Override

@@ -3,12 +3,13 @@ package net.iczelia.bawk.type;
 import net.bytebuddy.description.type.TypeDescription;
 
 public enum PrimitiveType implements Type {
-    I32, STR;
+    I32, F32, STR;
 
     @Override
     public String toString() {
         return switch (this) {
             case I32 -> "i32";
+            case F32 -> "f32";
             case STR -> "str";
         };
     }
@@ -23,6 +24,7 @@ public enum PrimitiveType implements Type {
     public Class<?> getJavaType() {
         return switch (this) {
             case I32 -> int.class;
+            case F32 -> float.class;
             case STR -> String.class;
         };
     }
@@ -31,6 +33,7 @@ public enum PrimitiveType implements Type {
     public String getJavaTypeString() {
         return switch (this) {
             case I32 -> "I";
+            case F32 -> "F";
             case STR -> "Ljava/lang/String;";
         };
     }
@@ -39,6 +42,7 @@ public enum PrimitiveType implements Type {
     public TypeDescription getTypeDescription() {
         return switch (this) {
             case I32 -> TypeDescription.ForLoadedType.of(int.class);
+            case F32 -> TypeDescription.ForLoadedType.of(float.class);
             case STR -> TypeDescription.ForLoadedType.of(String.class);
         };
     }

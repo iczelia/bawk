@@ -23,6 +23,8 @@ public class HPrintJVMCodeGenerator implements JVMCodeGenerator<HPrint> {
         Method m;
         if (node.expr.type == PrimitiveType.I32) {
             m = CodeGenBase.getPrintln(int.class);
+        } else if (node.expr.type == PrimitiveType.F32) {
+            m = CodeGenBase.getPrintln(float.class);
         } else {
             m = CodeGenBase.getPrintln(String.class);
         }

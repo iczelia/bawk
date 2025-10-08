@@ -17,7 +17,18 @@ public class HEqExprJVMCodeGenerator implements JVMCodeGenerator<HEqExpr> {
     @Override
     public void visit(HEqExpr eq, CodeGenBase context) {
         Type lt = eq.left.type;
-        if (lt == PrimitiveType.I32) {
+        if (lt == PrimitiveType.F32) {
+            context.emitExpr(eq.left);
+            context.emitExpr(eq.right);
+            context.mv.visitInsn(Opcodes.FCMPL);
+            Label T = new Label(), D = new Label();
+            context.mv.visitJumpInsn(Opcodes.IFEQ, T);
+            context.mv.visitLdcInsn(0);
+            context.mv.visitJumpInsn(Opcodes.GOTO, D);
+            context.mv.visitLabel(T);
+            context.mv.visitLdcInsn(1);
+            context.mv.visitLabel(D);
+        } else if (lt == PrimitiveType.I32) {
             context.emitExpr(eq.left);
             context.emitExpr(eq.right);
             context.emitIntBoolFromCompare(Opcodes.IF_ICMPEQ);

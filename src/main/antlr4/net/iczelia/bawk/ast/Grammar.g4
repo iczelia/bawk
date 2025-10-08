@@ -17,6 +17,7 @@ decl
 base_type
   : 'i32'
   | 'str'
+  | 'f32'
   ;
 
 type
@@ -143,6 +144,10 @@ primary
   : '(' expr ')'                      # Paren
   | fnCallRule                        # FnCall
   | INT                               # ConstInt
+  | HEX                               # ConstHex
+  | OCT                               # ConstOct
+  | BIN                               # ConstBin
+  | FLOAT                             # ConstFloat
   | STRING                            # ConstStr
   | ID                                # Var
   | type '[' expr ']'                 # ArrayAlloc
@@ -158,7 +163,11 @@ lvalue
 // LEXER
 
 ID      : [a-zA-Z_][a-zA-Z_0-9]* ;
-INT     : [0-9]+ ;
+INT     : '-'? [0-9]+ ;
+HEX     : '0x' [0-9a-fA-F]+ ;
+OCT     : '0o' [0-7]+ ;
+BIN     : '0b' [0-1]+ ;
+FLOAT   : '-'? [0-9]* '.' [0-9]* ([eE] [+-]? [0-9]+)? ;
 STRING  : '"' ( '\\' . | ~["\\] )* '"' ;
 
 WS      : [ \t\r\n]+ -> skip ;

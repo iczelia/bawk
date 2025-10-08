@@ -70,6 +70,8 @@ public abstract class CodeGenBase implements ByteCodeAppender {
             if (at instanceof ArrayType at2) {
                 if (at2.elementType == PrimitiveType.I32) {
                     mv.visitInsn(Opcodes.IALOAD);
+                } else if (at2.elementType == PrimitiveType.F32) {
+                    mv.visitInsn(Opcodes.FALOAD);
                 } else if (at2.elementType == PrimitiveType.STR) {
                     mv.visitInsn(Opcodes.AALOAD);
                 } else {
@@ -98,6 +100,8 @@ public abstract class CodeGenBase implements ByteCodeAppender {
             if (at instanceof ArrayType at2) {
                 if (at2.elementType == PrimitiveType.I32) {
                     mv.visitInsn(Opcodes.IASTORE);
+                } else if (at2.elementType == PrimitiveType.F32) {
+                    mv.visitInsn(Opcodes.FASTORE);
                 } else if (at2.elementType == PrimitiveType.STR) {
                     mv.visitInsn(Opcodes.AASTORE);
                 } else {
@@ -127,16 +131,19 @@ public abstract class CodeGenBase implements ByteCodeAppender {
 
     public void store(int idx, Type t) {
         if (t == PrimitiveType.I32) mv.visitVarInsn(Opcodes.ISTORE, idx);
+        else if (t == PrimitiveType.F32) mv.visitVarInsn(Opcodes.FSTORE, idx);
         else mv.visitVarInsn(Opcodes.ASTORE, idx);
     }
 
     public void load(int idx, Type t) {
         if (t == PrimitiveType.I32) mv.visitVarInsn(Opcodes.ILOAD, idx);
+        else if (t == PrimitiveType.F32) mv.visitVarInsn(Opcodes.FLOAD, idx);
         else mv.visitVarInsn(Opcodes.ALOAD, idx);
     }
 
     public void defaultInit(Type t) {
         if (t == PrimitiveType.I32) IntegerConstant.forValue(0).apply(mv, null);
+        else if (t == PrimitiveType.F32) mv.visitLdcInsn(0.0f);
         else mv.visitInsn(Opcodes.ACONST_NULL);
     }
 

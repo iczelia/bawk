@@ -122,6 +122,10 @@ public class HIRLowering {
         return new HI32Lit(i32Lit.getValue(), i32Lit.getInferredType(null), unit, env);
     }
 
+    public HF32Lit lower(HXlatUnit unit, HEnv env, F32Lit f32Lit) {
+        return new HF32Lit(f32Lit.getValue(), f32Lit.getInferredType(null), unit, env);
+    }
+
     public HIfElseExpr lower(HXlatUnit unit, HEnv env, IfElseExpr ifElseExpr) {
         HExpr condition = lowerGeneric(unit, env, ifElseExpr.cond);
         HExpr yes = lowerGeneric(unit, env, ifElseExpr.yes);
@@ -228,6 +232,7 @@ public class HIRLowering {
             case AssignExpr ae -> lower(unit, env, ae);
             case ArithmeticBinOp bo -> lower(unit, env, bo);
             case I32Lit i32 -> lower(unit, env, i32);
+            case F32Lit f32 -> lower(unit, env, f32);
             case IfElseExpr iee -> lower(unit, env, iee);
             case PreIncDec pid -> lower(unit, env, pid);
             case ExprBlock eb -> lower(unit, env, eb);
