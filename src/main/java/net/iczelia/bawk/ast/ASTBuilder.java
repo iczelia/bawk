@@ -185,8 +185,7 @@ public class ASTBuilder extends GrammarBaseVisitor<ParseResult> {
 
     @Override
     public ParseResult visitUnaryOp(GrammarParser.UnaryOpContext ctx) {
-        Unary u = new Unary(ctx.getChild(0).getText(), (Expr) visit(ctx.unaryExpr()));
-        return u;
+        return new Unary(ctx.getChild(0).getText(), (Expr) visit(ctx.unaryExpr()));
     }
 
     @Override
