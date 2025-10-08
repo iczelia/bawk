@@ -14,26 +14,38 @@ public class HComparisonExprJVMCodeGenerator implements JVMCodeGenerator<HExpr> 
     public void visit(HExpr node, CodeGenBase context) {
         switch (node) {
             case HLtExpr e -> {
-                context.emitExpr(e.left);
-                context.emitExpr(e.right);
-                context.emitIntBoolFromCompare(Opcodes.IF_ICMPLT);
+                emitComparison(e.left, e.right, context, Opcodes.IF_ICMPLT, Opcodes.IFLT);
             }
             case HLeExpr e -> {
-                context.emitExpr(e.left);
-                context.emitExpr(e.right);
-                context.emitIntBoolFromCompare(Opcodes.IF_ICMPLE);
+                emitComparison(e.left, e.right, context, Opcodes.IF_ICMPLE, Opcodes.IFLE);
             }
             case HGtExpr e -> {
-                context.emitExpr(e.left);
-                context.emitExpr(e.right);
-                context.emitIntBoolFromCompare(Opcodes.IF_ICMPGT);
+                emitComparison(e.left, e.right, context, Opcodes.IF_ICMPGT, Opcodes.IFGT);
             }
             case HGeExpr e -> {
-                context.emitExpr(e.left);
-                context.emitExpr(e.right);
-                context.emitIntBoolFromCompare(Opcodes.IF_ICMPGE);
+                emitComparison(e.left, e.right, context, Opcodes.IF_ICMPGE, Opcodes.IFGE);
             }
             default -> throw new RuntimeException("Comparison expression code generator received an invalid HIR node.");
+        }
+    }
+
+    private void emitComparison(HExpr left, HExpr right, CodeGenBase context, int intOpcode, int floatOpcode) {
+        var leftType = left.type;
+        var rightType = right.type;
+        context.emitExpr(left);
+        if (leftType == net.iczelia.bawk.type.PrimitiveType.I32 && rightType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            context.mv.visitInsn(Opcodes.I2F);
+        }
+        context.emitExpr(right);
+        if (rightType == net.iczelia.bawk.type.PrimitiveType.I32 && leftType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            context.mv.visitInsn(Opcodes.I2F);
+        }
+        if (leftType == net.iczelia.bawk.type.PrimitiveType.F32 || rightType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            // For floats, use FCMPL and branch
+            context.mv.visitInsn(Opcodes.FCMPL);
+            context.emitIntBoolFromCompare(floatOpcode);
+        } else {
+            context.emitIntBoolFromCompare(intOpcode);
         }
     }
 }

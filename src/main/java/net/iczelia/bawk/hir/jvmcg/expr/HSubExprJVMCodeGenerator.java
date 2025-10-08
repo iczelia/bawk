@@ -8,8 +8,20 @@ import net.iczelia.bawk.hir.jvmcg.JVMCodeGenerator;
 public class HSubExprJVMCodeGenerator implements JVMCodeGenerator<HSubExpr> {
     @Override
     public void visit(HSubExpr node, CodeGenBase context) {
+        var leftType = node.left.getType();
+        var rightType = node.right.getType();
         context.emitExpr(node.left);
+        if (leftType == net.iczelia.bawk.type.PrimitiveType.I32 && rightType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            context.mv.visitInsn(Opcodes.I2F);
+        }
         context.emitExpr(node.right);
-        context.mv.visitInsn(Opcodes.ISUB);
+        if (rightType == net.iczelia.bawk.type.PrimitiveType.I32 && leftType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            context.mv.visitInsn(Opcodes.I2F);
+        }
+        if (leftType == net.iczelia.bawk.type.PrimitiveType.F32 || rightType == net.iczelia.bawk.type.PrimitiveType.F32) {
+            context.mv.visitInsn(Opcodes.FSUB);
+        } else {
+            context.mv.visitInsn(Opcodes.ISUB);
+        }
     }
 }
