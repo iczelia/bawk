@@ -5,7 +5,7 @@ import net.iczelia.bawk.type.Type;
 import java.util.*;
 
 public class SymbolTable {
-    private final Deque<Map<String, Type>> scopes = new ArrayDeque<>();
+    private final Deque<Map<String, List<Type>>> scopes = new ArrayDeque<>();
 
     public SymbolTable() {
         enter();
@@ -21,18 +21,37 @@ public class SymbolTable {
 
     public boolean declare(String name, Type t, List<ASTError> errs) {
         var top = scopes.peek();
-        if (top.containsKey(name)) {
-            errs.add(new ASTError("redeclaration of '" + name + "'"));
-            return false;
+        var overloads = top.getOrDefault(name, new ArrayList<>());
+        for (Type existing : overloads) {
+            if (existing.equals(t)) {
+                errs.add(new ASTError("redeclaration of '" + name + "' with same signature"));
+                return false;
+            }
         }
-        top.put(name, t);
+        overloads.add(t);
+        top.put(name, overloads);
         return true;
     }
 
-    public Type lookup(String name) {
+    public List<Type> lookupAll(String name) {
         for (var m : scopes) {
-            var t = m.get(name);
-            if (t != null) return t;
+            var overloads = m.get(name);
+            if (overloads != null) return overloads;
+        }
+        return null;
+    }
+
+    public Type lookup(String name, List<Type> argTypes) {
+        List<Type> overloads = lookupAll(name);
+        if (overloads == null) return null;
+        for (Type t : overloads) {
+            if (t instanceof net.iczelia.bawk.type.FunctionType ft) {
+                if (ft.paramTypes.equals(argTypes)) {
+                    return t;
+                }
+            } else {
+                return t;
+            }
         }
         return null;
     }

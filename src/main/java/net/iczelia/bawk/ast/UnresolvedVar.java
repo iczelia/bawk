@@ -15,7 +15,7 @@ public class UnresolvedVar extends LValue {
 
     @Override
     protected Type tryInfer(TypeEnvironment env) {
-        Type t = env.sym.lookup(name);
+        Type t = env.sym.lookup(name, null);
         if (t == null) {
             env.errors.add(new ASTError("use of undeclared variable '" + name + "'"));
         }

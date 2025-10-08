@@ -35,7 +35,6 @@ public class CompilationPipeline {
         hir.accept(new TailCallChildTransformer());
 
         CodeGen gen = new CodeGen(hir);
-        Class<?> cls = gen.loadAndDefine(className);
-        return cls;
+        return gen.loadAndDefine(className);
     }
 }

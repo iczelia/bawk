@@ -13,8 +13,8 @@ public class Print extends Statement {
     @Override
     protected void check() {
         Type t = value.getInferredType(typeEnv);
-        if (t != PrimitiveType.I32 && t != PrimitiveType.STR) {
-            typeEnv.errors.add(new ASTError("print expects i32 or str"));
+        if (t != PrimitiveType.I32 && t != PrimitiveType.STR && t != PrimitiveType.F32) {
+            typeEnv.errors.add(new ASTError("print expects i32, f32 or str"));
         }
     }
 

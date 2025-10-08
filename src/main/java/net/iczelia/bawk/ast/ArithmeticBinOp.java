@@ -36,25 +36,35 @@ public class ArithmeticBinOp extends Expr {
                 if (lt == PrimitiveType.I32 && rt == PrimitiveType.I32) {
                     return PrimitiveType.I32;
                 }
-                env.errors.add(new ASTError("arithmetic '" + op + "' requires i32, got " + lt + " and " + rt));
+                if ((lt == PrimitiveType.F32 && rt == PrimitiveType.F32) ||
+                    (lt == PrimitiveType.I32 && rt == PrimitiveType.F32) ||
+                    (lt == PrimitiveType.F32 && rt == PrimitiveType.I32)) {
+                    return PrimitiveType.F32;
+                }
+                env.errors.add(new ASTError("arithmetic '" + op + "' requires i32 or f32, got " + lt + " and " + rt));
                 return null;
             }
 
             // comparisons
             case "<", ">", "<=", ">=" -> {
-                if (lt == PrimitiveType.I32 && rt == PrimitiveType.I32) {
+                if ((lt == PrimitiveType.I32 && rt == PrimitiveType.I32) ||
+                    (lt == PrimitiveType.F32 && rt == PrimitiveType.F32) ||
+                    (lt == PrimitiveType.I32 && rt == PrimitiveType.F32) ||
+                    (lt == PrimitiveType.F32 && rt == PrimitiveType.I32)) {
                     return PrimitiveType.I32;
                 }
-                env.errors.add(new ASTError("comparison '" + op + "' requires i32, got " + lt + " and " + rt));
+                env.errors.add(new ASTError("comparison '" + op + "' requires i32 or f32, got " + lt + " and " + rt));
                 return null;
             }
 
             // equality
             case "==", "!=" -> {
-                if (lt == rt) {
+                if ((lt == rt) ||
+                    (lt == PrimitiveType.I32 && rt == PrimitiveType.F32) ||
+                    (lt == PrimitiveType.F32 && rt == PrimitiveType.I32)) {
                     return PrimitiveType.I32;
                 }
-                env.errors.add(new ASTError("equality '" + op + "' requires operands of same type, got " + lt + " and " + rt));
+                env.errors.add(new ASTError("equality '" + op + "' requires operands of compatible types, got " + lt + " and " + rt));
                 return null;
             }
         }

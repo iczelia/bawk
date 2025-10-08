@@ -124,4 +124,20 @@ public class TestProcedures {
         assertEquals(1, lines.length);
         assertEquals("120", lines[0]);
     }
+
+    @Test
+    public void testSuccessorOverloaded() {
+        String program = """
+                fn successor(x: i32): i32 { x + 1 }
+                fn successor(x: f32): f32 { x + 1.0 }
+                print(successor(0));
+                print(successor(0.0));
+                """;
+
+        String output = CompilationTestPipeline.testProgram(program);
+        String[] lines = output.split(System.lineSeparator());
+        assertEquals(2, lines.length);
+        assertEquals("1", lines[0]);
+        assertEquals("1.0", lines[1]);
+    }
 }

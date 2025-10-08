@@ -17,23 +17,29 @@ public class UnresolvedFnCall extends Expr {
 
     @Override
     protected Type tryInfer(TypeEnvironment env) {
-        // lookup name in env
-        var sym = env.sym.lookup(name);
+        // Collect argument types
+        List<Type> argTypes = args.stream().map(a -> a.getInferredType(env)).toList();
+        if (argTypes.contains(null)) {
+            env.errors.add(new ASTError("cannot infer type of one or more arguments in call to '" + name + "'"));
+            return null;
+        }
+        // Lookup function by name and argument types
+        var sym = env.sym.lookup(name, argTypes);
         if (!(sym instanceof FunctionType fn)) {
-            env.errors.add(new ASTError("'" + name + "' does not name a function"));
+            env.errors.add(new ASTError("no matching overload for function '" + name + "' with argument types " + argTypes));
             return null;
         }
         this.referredType = fn;
+        // Check argument count (should always match if overload found)
         if (fn.paramTypes.size() != args.size()) {
             env.errors.add(new ASTError("function '" + name + "' expects " + fn.paramTypes.size() + " arguments, got " + args.size()));
             return fn.returnType;
         }
+        // Check argument compatibility
         for (int i = 0; i < args.size(); i++) {
-            var at = args.get(i).getInferredType(env);
+            var at = argTypes.get(i);
             var pt = fn.paramTypes.get(i);
-            if (at == null) {
-                env.errors.add(new ASTError("cannot infer type of argument " + (i + 1) + " in call to '" + name + "'"));
-            } else if (!at.compatible(pt)) {
+            if (!at.compatible(pt)) {
                 env.errors.add(new ASTError("type mismatch for argument " + (i + 1) + " in call to '" + name + "': expected " + pt + ", got " + at));
             }
         }

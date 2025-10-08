@@ -48,7 +48,8 @@ public class FnDecl extends Statement {
         // Transform tail self-recursive calls before type checks inside body.
         Type ft = getType();
         if (!typeEnv.sym.declare(name, ft, typeEnv.errors)) {
-            return; // don't check body if declaration failed
+            // error already added
+            return;
         }
         typeEnv.sym.enter(); // function scope
         for (FnDecl.FnParam p : params) {

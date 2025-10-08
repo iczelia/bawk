@@ -63,6 +63,8 @@ record FunctionImpl(HFnDecl fnDecl, String className, JVMEnvironment env) implem
                 mv.visitInsn(Opcodes.RETURN);
             } else if (fnDecl.returnType == PrimitiveType.I32) {
                 mv.visitInsn(Opcodes.IRETURN);
+            } else if (fnDecl.returnType == PrimitiveType.F32) {
+                mv.visitInsn(Opcodes.FRETURN);
             } else if (fnDecl.returnType == PrimitiveType.STR) {
                 mv.visitInsn(Opcodes.ARETURN);
             } else {
