@@ -26,7 +26,11 @@ public class ArithmeticBinOp extends Expr {
         return right;
     }
 
-    private Type resolveScalarType(TypeEnvironment env, Type lt, Type rt) {
+    @Override
+    protected Type tryInfer(TypeEnvironment env) {
+        Type lt = left.getInferredType(env);
+        Type rt = right.getInferredType(env);
+        if (lt == null || rt == null) return null;
         switch (op) {
             case "+", "-", "*", "/" -> {
                 if (lt == PrimitiveType.I32 && rt == PrimitiveType.I32) {
@@ -56,39 +60,5 @@ public class ArithmeticBinOp extends Expr {
         }
         env.errors.add(new ASTError("unknown operator '" + op + "'"));
         return null;
-    }
-
-    private Type stripArrayTypes(Type t) {
-        while (t instanceof ArrayType at) {
-            t = at.elementType;
-        }
-        return t;
-    }
-
-    private int rankOf(Type t) {
-        int rank = 0;
-        while (t instanceof ArrayType at) {
-            rank++;
-            t = at.elementType;
-        }
-        return rank;
-    }
-
-    @Override
-    protected Type tryInfer(TypeEnvironment env) {
-        Type lt = left.getInferredType(env);
-        Type rt = right.getInferredType(env);
-        if (lt == null || rt == null) return null;
-        Type ltA = stripArrayTypes(lt);
-        Type rtA = stripArrayTypes(rt);
-        Type elType = resolveScalarType(env, ltA, rtA);
-        // Rank of result is maximum of operand ranks
-        if (elType != null) {
-            int rank = Math.max(rankOf(lt), rankOf(rt));
-            while (rank-- > 0) {
-                elType = new ArrayType(elType);
-            }
-        }
-        return elType;
     }
 }
