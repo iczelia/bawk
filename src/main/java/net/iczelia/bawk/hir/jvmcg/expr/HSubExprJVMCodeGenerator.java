@@ -8,8 +8,8 @@ import net.iczelia.bawk.hir.jvmcg.JVMCodeGenerator;
 public class HSubExprJVMCodeGenerator implements JVMCodeGenerator<HSubExpr> {
     @Override
     public void visit(HSubExpr node, CodeGenBase context) {
-        var leftType = node.left.getType();
-        var rightType = node.right.getType();
+        var leftType = node.left.type;
+        var rightType = node.right.type;
         context.emitExpr(node.left);
         if (leftType == net.iczelia.bawk.type.PrimitiveType.I32 && rightType == net.iczelia.bawk.type.PrimitiveType.F32) {
             context.mv.visitInsn(Opcodes.I2F);
