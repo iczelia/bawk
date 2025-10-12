@@ -1,6 +1,7 @@
 package net.iczelia.bawk.ast;
 
 import net.iczelia.bawk.type.ArrayType;
+import net.iczelia.bawk.type.EitherType;
 import net.iczelia.bawk.type.PrimitiveType;
 import net.iczelia.bawk.type.Type;
 import org.apache.commons.text.StringEscapeUtils;
@@ -76,6 +77,15 @@ public class ASTBuilder extends GrammarBaseVisitor<ParseResult> {
     @Override
     public ParseResult visitBaseType(GrammarParser.BaseTypeContext ctx) {
         return visit(ctx.base_type());
+    }
+
+    @Override
+    public ParseResult visitEitherType(GrammarParser.EitherTypeContext ctx) {
+        Type[] alternatives = new Type[ctx.type().size()];
+        for (int i = 0; i < ctx.type().size(); i++) {
+            alternatives[i] = (Type) visit(ctx.type(i));
+        }
+        return new EitherType(alternatives);
     }
 
     @Override
@@ -207,6 +217,11 @@ public class ASTBuilder extends GrammarBaseVisitor<ParseResult> {
             args.add((Expr) visit(argCtx));
         }
         return new UnresolvedFnCall(ctx.ID().getText(), args);
+    }
+
+    @Override
+    public ParseResult visitInstanceOfCheck(GrammarParser.InstanceOfCheckContext ctx) {
+        return new InstanceOfCheck((Expr) visit(ctx.primary()), (Type) visit(ctx.type()));
     }
 
     @Override

@@ -41,6 +41,7 @@ public class ExprCodeGenerationRegistry {
         registry.put(HArrayIndexing.class, new HArrayIndexingJVMCodeGenerator());
         registry.put(HFnCall.class, new HFnCallJVMCodeGenerator());
         registry.put(HF32Lit.class, new HF32LitJVMCodeGenerator());
+        registry.put(HInstanceOfCheck.class, new HInstanceOfCheckJVMCodeGenerator());
         return registry;
     }
 }

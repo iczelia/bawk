@@ -224,6 +224,12 @@ public class HIRLowering {
         return new HWhile(condition, body, unit, env);
     }
 
+    public HInstanceOfCheck lower(HXlatUnit unit, HEnv env, InstanceOfCheck ioc) {
+        HExpr reference = lowerGeneric(unit, env, ioc.getReference());
+        Type desiredType = ioc.getDesiredType();
+        return new HInstanceOfCheck(reference, desiredType, ioc.getInferredType(null), unit, env);
+    }
+
     private HExpr lowerGeneric(HXlatUnit unit, HEnv env, Expr init) {
         return switch (init) {
             case ArrayAlloc aa -> lower(unit, env, aa);
@@ -233,6 +239,7 @@ public class HIRLowering {
             case ArithmeticBinOp bo -> lower(unit, env, bo);
             case I32Lit i32 -> lower(unit, env, i32);
             case F32Lit f32 -> lower(unit, env, f32);
+            case InstanceOfCheck ioc -> lower(unit, env, ioc);
             case IfElseExpr iee -> lower(unit, env, iee);
             case PreIncDec pid -> lower(unit, env, pid);
             case ExprBlock eb -> lower(unit, env, eb);

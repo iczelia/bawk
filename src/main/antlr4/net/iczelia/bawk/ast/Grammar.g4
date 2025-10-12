@@ -23,6 +23,7 @@ base_type
 type
   : type '[]' # ArrayType
   | base_type # BaseType
+  | type ('|' type)+ # EitherType
   ;
 
 stmt
@@ -152,6 +153,7 @@ primary
   | ID                                # Var
   | type '[' expr ']'                 # ArrayAlloc
   | ('(' type ')')? '{' (expr (',' expr)*)? '}'       # ArrayInitializer
+  | primary 'is' type                  # InstanceOfCheck
   ;
 
 lvalue

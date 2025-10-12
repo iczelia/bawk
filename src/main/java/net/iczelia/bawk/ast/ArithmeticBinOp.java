@@ -1,6 +1,5 @@
 package net.iczelia.bawk.ast;
 
-import net.iczelia.bawk.type.ArrayType;
 import net.iczelia.bawk.type.PrimitiveType;
 import net.iczelia.bawk.type.Type;
 
